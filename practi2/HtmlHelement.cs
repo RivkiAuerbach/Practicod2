@@ -23,9 +23,9 @@ namespace practi2
         {
             Queue<HtmlElement> q = new Queue<HtmlElement>();
             q.Enqueue(this);
-            while (q != null)
+            while (q.Count != 0)
             {
-                HtmlElement rootElement = q.First();
+                HtmlElement rootElement = q.Peek();
                 yield return q.Dequeue();
                 foreach (var item in rootElement.Children)
                     q.Enqueue(item);
@@ -43,19 +43,15 @@ namespace practi2
             }
             return list;
         }
-        //לתקן
-        public void FindSelectors(Selector selector, HtmlElement htmlElement)
-        {
 
-        }
-        public List<HtmlElement> FindSelectors2(Selector selector)
+        public static void FindSelectors(Selector selector, HtmlElement htmlElement, List<HtmlElement> result)
         {
-            bool flag = true;
             List<HtmlElement> list1 = new List<HtmlElement>();
-            list1 = Descendants().ToList();
-            List<HtmlElement> list2 = new List<HtmlElement>();
+            list1 = htmlElement.Descendants().ToList();
+            bool flag = true;
             foreach (var item in list1)
             {
+                Console.WriteLine(item.Name);
                 if (item.Id == selector.Id && item.Name == selector.TagName)
                 {
                     if (item.Classes.Count() != selector.Classes.Count())
@@ -70,13 +66,62 @@ namespace practi2
                                 break;
                             }
                         }
-
                     }
                 }
                 if (flag == true)
-                    list2.Add(item);
+                {
+                    if (selector.Child == null)
+                        result.Add(item);
+                    else
+                    {
+                        foreach (var htmlElementChild in htmlElement.Children)
+                            FindSelectors(selector.Child, htmlElementChild, result);
+                    }
+                }
             }
-            return list2;
+            if (selector.Child == null)
+                return;
         }
+
+
+
+
+        //לתקן
+        //public void FindSelectors(Selector selector, HtmlElement htmlElement)
+        //{
+
+        //}
+        //public List<HtmlElement> FindSelectors2(Selector selector)
+        //{
+        //    bool flag = true;
+        //    List<HtmlElement> list1 = new List<HtmlElement>();
+        //    list1 = Descendants().ToList();
+        //    List<HtmlElement> list2 = new List<HtmlElement>();
+        //    foreach (var item in list1)
+        //    {
+        //        if (item.Id == selector.Id && item.Name == selector.TagName)
+        //        {
+        //            if (item.Classes.Count() != selector.Classes.Count())
+        //                flag = false;
+        //            if (flag == true)
+        //            {
+        //                for (int i = 0; i < item.Classes.Count(); i++)
+        //                {
+        //                    if (item.Classes[i] != selector.Classes[i])
+        //                    {
+        //                        flag = false;
+        //                        break;
+        //                    }
+        //                }
+
+        //            }
+        //        }
+        //        if (flag == true)
+        //            list2.Add(item);
+        //    }
+        //    return list2;
+        //}
+
+
     }
 }

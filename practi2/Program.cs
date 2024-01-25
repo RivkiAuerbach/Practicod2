@@ -2,11 +2,30 @@
 using practi2;
 using System.Text.RegularExpressions;
 
-var html = await Load("https://learn.malkabruk.co.il/");
-HtmlElement rootElement = builtree(html);
-PrintTree(rootElement, 0);
 
-static HtmlElement builtree(string html)
+
+
+var html = await Load("https://learn.malkabruk.co.il/");
+HtmlElement rootElement = buildtree(html);
+PrintTree(rootElement, 0);
+Selector s = Selector.CreateTree("div .home-hero-heading.heading1");
+Console.WriteLine(s.TagName+ " " +s.Child.Classes[0]+ " " + s.Child.Classes[1]);
+//עד כאן לתקן
+List<HtmlElement> result = new List<HtmlElement>();
+HtmlElement.FindSelectors(s, rootElement, result);
+var set = new HashSet<HtmlElement>(result);
+foreach (HtmlElement item in set.ToList())
+{
+    Console.WriteLine(item.Name);
+}
+
+
+
+
+
+
+
+static HtmlElement buildtree(string html)
 {
     var clearHtml = new Regex(@"[\r\n]+").Replace(html, "");
     var htmlLines = new Regex("<(.*?)>").Split(clearHtml).Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
@@ -120,6 +139,7 @@ static void PrintTree(HtmlElement element, int depth)
         PrintTree(child, depth + 1);
     }
 }
+
 
 static async Task<string> Load(string url)
 {
