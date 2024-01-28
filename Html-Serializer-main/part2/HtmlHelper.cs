@@ -1,12 +1,11 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
 
-namespace practi2
+namespace part2
 {
     internal class HtmlHelper
     {
@@ -16,10 +15,10 @@ namespace practi2
         public string[] SelfClosingTags { get; private set; }
         private HtmlHelper()
         {
-            var s = File.ReadAllText("files/AllTags.json");
+            var s = File.ReadAllText("AllTags.json");
             this.AllTags = JsonSerializer.Deserialize<string[]>(s);
 
-            var a = File.ReadAllText("files/SelfClosingTags.json");
+            var a = File.ReadAllText("SelfClosingTags.json");
             this.SelfClosingTags = JsonSerializer.Deserialize<string[]>(a);
         }
 
@@ -27,18 +26,12 @@ namespace practi2
         {
             return this.SelfClosingTags.Contains(tag);
         }
-
-
-
-        public bool isHtmlTag(string tag)
+       
+        public bool IsHtmlTag(string tag)
         {
             return this.AllTags.Contains(tag);
         }
+        
 
     }
 }
-
-
-
-
-

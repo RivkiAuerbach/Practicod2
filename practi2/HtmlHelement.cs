@@ -23,12 +23,14 @@ namespace practi2
         {
             Queue<HtmlElement> q = new Queue<HtmlElement>();
             q.Enqueue(this);
-            while (q.Count != 0)
+            while (q.Count > 0)
             {
-                HtmlElement rootElement = q.Peek();
-                yield return q.Dequeue();
-                foreach (var item in rootElement.Children)
+                HtmlElement rootElement = q.Dequeue();
+                foreach (HtmlElement item in rootElement.Children)
+                {
                     q.Enqueue(item);
+                }
+                yield return rootElement;
             }
         }
         public List<HtmlElement> Ancestors()
@@ -46,82 +48,55 @@ namespace practi2
 
         public static void FindSelectors(Selector selector, HtmlElement htmlElement, List<HtmlElement> result)
         {
-            List<HtmlElement> list1 = new List<HtmlElement>();
-            list1 = htmlElement.Descendants().ToList();
-            bool flag = true;
-            foreach (var item in list1)
+            List<HtmlElement> list1 = htmlElement.Descendants().ToList();
+
+
+            foreach (HtmlElement item in list1)
             {
-                Console.WriteLine(item.Name);
-                if (item.Id == selector.Id && item.Name == selector.TagName)
+
+                if (item.Id != null && selector.Id != null)
+                    if (item.Id != selector.Id)
+                        continue;
+                if (!(item.Id == null && selector.Id == null))
+                    continue;
+                if (item.Name != null && selector.TagName != null)
+                    if (item.Name != selector.TagName)
+                        continue;
+                if (!(item.Name == null && selector.TagName == null))
+                    continue;
+                if (selector.Classes != null && item.Classes != null)
                 {
-                    if (item.Classes.Count() != selector.Classes.Count())
-                        flag = false;
-                    if (flag == true)
-                    {
-                        for (int i = 0; i < item.Classes.Count(); i++)
-                        {
-                            if (item.Classes[i] != selector.Classes[i])
-                            {
-                                flag = false;
-                                break;
-                            }
-                        }
-                    }
+
+                    if (!selector.Classes.All(c => item.Classes.Contains(c)))
+                        continue;
                 }
-                if (flag == true)
+                else
                 {
-                    if (selector.Child == null)
-                        result.Add(item);
-                    else
-                    {
-                        foreach (var htmlElementChild in htmlElement.Children)
-                            FindSelectors(selector.Child, htmlElementChild, result);
-                    }
+                    if (!(selector.Classes == null && item.Classes == null))
+                        continue;
                 }
+                if (selector.Child == null)
+                    result.Add(item);
+                else
+                {
+                    foreach (HtmlElement htmlElementChild in item.Children)
+                        FindSelectors(selector.Child, htmlElementChild, result);
+                }
+
+
             }
-            if (selector.Child == null)
-                return;
         }
-
-
-
-
-        //לתקן
-        //public void FindSelectors(Selector selector, HtmlElement htmlElement)
-        //{
-
-        //}
-        //public List<HtmlElement> FindSelectors2(Selector selector)
-        //{
-        //    bool flag = true;
-        //    List<HtmlElement> list1 = new List<HtmlElement>();
-        //    list1 = Descendants().ToList();
-        //    List<HtmlElement> list2 = new List<HtmlElement>();
-        //    foreach (var item in list1)
-        //    {
-        //        if (item.Id == selector.Id && item.Name == selector.TagName)
-        //        {
-        //            if (item.Classes.Count() != selector.Classes.Count())
-        //                flag = false;
-        //            if (flag == true)
-        //            {
-        //                for (int i = 0; i < item.Classes.Count(); i++)
-        //                {
-        //                    if (item.Classes[i] != selector.Classes[i])
-        //                    {
-        //                        flag = false;
-        //                        break;
-        //                    }
-        //                }
-
-        //            }
-        //        }
-        //        if (flag == true)
-        //            list2.Add(item);
-        //    }
-        //    return list2;
-        //}
 
 
     }
 }
+
+
+
+
+
+
+
+
+
+

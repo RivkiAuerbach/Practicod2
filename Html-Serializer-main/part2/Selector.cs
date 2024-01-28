@@ -1,13 +1,11 @@
-﻿//ציפי
-using practi2;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace practi2
+namespace part2
 {
     internal class Selector
     {
@@ -33,7 +31,7 @@ namespace practi2
             {
                 current.Classes = new List<string>();
                 string[] idAndClass = selector.Split('.');
-                if (HtmlHelper.Instance.isHtmlTag(idAndClass[0]))
+                if (HtmlHelper.Instance.IsHtmlTag(idAndClass[0]))
                 {
                     current.TagName = idAndClass[0];
                 }
@@ -65,19 +63,19 @@ namespace practi2
             return current;
 
         }
-
+        
         public static Selector CreateTree(string selector)
         {
             Selector root = null;
-            Selector current;
-            Selector prev = null;
+            Selector current ;
+            Selector prev=null;
             if (!selector.Contains(" "))
                 return CreateSelector(selector);
-            string[] selectors = selector.Split(" ");
+            string[] selectors= selector.Split(" ");
 
             foreach (string s in selectors)
             {
-                current = CreateSelector(s);
+                current=CreateSelector(s);
                 if (prev != null)
                 {
                     current.Parent = prev;
@@ -85,7 +83,7 @@ namespace practi2
                 }
                 else
                 {
-                    root = current;
+                    root=current;
                 }
                 prev = current;
 
@@ -95,9 +93,3 @@ namespace practi2
         }
     }
 }
-
-
-
-
-
-

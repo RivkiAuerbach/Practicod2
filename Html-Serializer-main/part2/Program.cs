@@ -1,30 +1,7 @@
-﻿
-using practi2;
+﻿using part2;
 using System.Text.RegularExpressions;
-//div.home - hero - heading.heading1"
 
-
-
-var html = await Load("https://learn.malkabruk.co.il/");
-HtmlElement rootElement = buildtree(html);
-PrintTree(rootElement, 0);
-Selector s = Selector.CreateTree("div.home-hero1");
-//Console.WriteLine(s.TagName + " " + s.Child.Classes[0] + " " + s.Child.Classes[1]);
-
-List<HtmlElement> result = new List<HtmlElement>();
-HtmlElement.FindSelectors(s, rootElement, result);
-var set = new HashSet<HtmlElement>(result);
-foreach (HtmlElement item in set.ToList())
-{
-    Console.WriteLine(item.Name);
-}
-
-
-
-
-
-
-static HtmlElement buildtree(string html)
+static HtmlElement Serialize(string html)
 {
     var clearHtml = new Regex(@"[\r\n]+").Replace(html, "");
     var htmlLines = new Regex("<(.*?)>").Split(clearHtml).Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
@@ -69,6 +46,7 @@ static HtmlElement buildtree(string html)
             {
                 attributes.RemoveAll(attr => attr == id);
                 id = id.Substring(4);
+                id = id.Replace("\"", string.Empty);
             }
 
             clas = attributes.FirstOrDefault(attr => attr.StartsWith("class"));
@@ -76,6 +54,7 @@ static HtmlElement buildtree(string html)
             {
                 attributes.RemoveAll(attr => attr == clas);
                 clas = clas.Substring(7);
+                clas= clas.Replace("\"", string.Empty);
                 classes = clas.Split(" ").ToList();
             }
         }
@@ -86,11 +65,10 @@ static HtmlElement buildtree(string html)
         }
         else if (line.StartsWith("/"))
         {
-            if (currentElement != null)
-                currentElement = currentElement.Parent;
+            currentElement = currentElement.Parent;
         }
 
-        else if (!HtmlHelper.Instance.isHtmlTag(name))
+        else if (!HtmlHelper.Instance.IsHtmlTag(name))
         {
             currentElement.InnerHtml = (string)line;
         }
@@ -128,17 +106,15 @@ static HtmlElement buildtree(string html)
     return rootElement;
 }
 
-
 static void PrintTree(HtmlElement element, int depth)
 {
     Console.WriteLine(new string(' ', depth * 2) + element.Name);
-
+    
     foreach (var child in element.Children)
     {
         PrintTree(child, depth + 1);
     }
 }
-
 
 static async Task<string> Load(string url)
 {
@@ -148,20 +124,20 @@ static async Task<string> Load(string url)
 
     return html;
 }
+ 
+var html = await Load("https://learn.malkabruk.co.il/");
+HtmlElement rootElement= Serialize(html);
+IEnumerable<HtmlElement> elements =rootElement.Descendants();
 
+string selector = "div .home-container header.home-navbar-interactive  #profile-menu a";
 
+Selector n = Selector.CreateTree(selector);
+List<HtmlElement> nodes = HtmlElement.Search(rootElement, n, new List<HtmlElement> ());
+foreach (HtmlElement item in nodes)
+{
+    Console.WriteLine(item.Id);
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
+Console.ReadLine();
 
 
