@@ -128,8 +128,8 @@ static async Task<string> Load(string url)
 var html = await Load("https://learn.malkabruk.co.il/");
 HtmlElement rootElement= Serialize(html);
 IEnumerable<HtmlElement> elements =rootElement.Descendants();
-
-string selector = "div .home-container header.home-navbar-interactive  #profile-menu a";
+PrintTree(rootElement, 1);
+string selector = "div .home-header";
 
 Selector n = Selector.CreateTree(selector);
 List<HtmlElement> nodes = HtmlElement.Search(rootElement, n, new List<HtmlElement> ());
